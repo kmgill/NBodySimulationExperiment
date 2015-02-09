@@ -40,6 +40,7 @@ namespace apoapsys {
 		real radius;
 		real mass;
 
+		Particle();
 		Particle(int _id, real _radius, real _mass);
 
 		bool operator==(const Particle & o);

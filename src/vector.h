@@ -25,6 +25,7 @@ namespace apoapsys {
 		Vector();
 		Vector(real _x, real _y, real _z, real _w = 0);
 
+		void set(real _x, real _y, real _z);
 		bool operator=(const Vector & o);
 		Vector operator+(const Vector & o);
 		Vector operator-(const Vector & o);

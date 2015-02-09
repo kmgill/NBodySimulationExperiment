@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/collisionproviders.cpp \
 ../src/forceproviders.cpp \
 ../src/leapfrogsimulator.cpp \
 ../src/main.cpp \
@@ -11,6 +12,7 @@ CPP_SRCS += \
 ../src/vector.cpp 
 
 OBJS += \
+./src/collisionproviders.o \
 ./src/forceproviders.o \
 ./src/leapfrogsimulator.o \
 ./src/main.o \
@@ -18,6 +20,7 @@ OBJS += \
 ./src/vector.o 
 
 CPP_DEPS += \
+./src/collisionproviders.d \
 ./src/forceproviders.d \
 ./src/leapfrogsimulator.d \
 ./src/main.d \

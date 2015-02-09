@@ -12,6 +12,8 @@
 #include "vector.h"
 #include "particle.h"
 #include "forceproviders.h"
+#include "collisionproviders.h"
+
 #include <vector>
 
 namespace apoapsys {
@@ -20,17 +22,24 @@ namespace apoapsys {
 	private:
 		std::vector<Particle> particles;
 		std::vector<ForceProvider> forceProviders;
+		std::vector<CollisionDetectionProvider> collisionProviders;
+
+		bool _checkForCollisions;
 
 		void stepVelocityVectors(real deltaT);
 		void stepPositionVectors(real deltaT);
+		Particle * checkForCollision(Particle & particle);
+
 	public:
 		LeapFrogSimulator();
 		~LeapFrogSimulator();
 
+		void checkForCollisions(bool c);
 		void addParticle(Particle & particle);
 		void addForceProvider(ForceProvider & forceProvider);
+		void addCollisionProvider(CollisionDetectionProvider & collisionProvider);
 
-		void step(real deltaT);
+		void step(real deltaT, std::vector<Collision *> & collisions);
 	};
 
 };

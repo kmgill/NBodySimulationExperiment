@@ -16,6 +16,12 @@
 
 namespace apoapsys {
 
+	Particle::Particle()
+		: identifier(0)
+		, radius(0)
+		, mass(0) {
+
+	}
 
 	Particle::Particle(int _id, real _radius, real _mass)
 		: identifier(_id)

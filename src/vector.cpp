@@ -30,6 +30,12 @@ namespace apoapsys {
 
 	}
 
+	void Vector::set(real _x, real _y, real _z) {
+		this->x = _x;
+		this->y = _y;
+		this->z = _z;
+	}
+
 	bool Vector::operator=(const Vector & o) {
 		return (this->x == o.x && this->y == o.y && this->z == o.z && this->w == o.w);
 	}
