@@ -12,6 +12,7 @@
 #include "collisionproviders.h"
 #include "leapfrogsimulator.h"
 #include "solarsystemsnapshot.h"
+#include <omp.h>
 #include <iostream>
 #include <vector>
 
@@ -39,6 +40,7 @@ void cleanCollisions(std::vector<Collision *> collisions) {
 
 int main(int argc, char ** argv) {
 
+	std::cout << "Num OpenMP Threads: " << omp_get_num_threads() << std::endl;
 	std::cout << "Initializing Simulator Engine..." << std::endl;
 	LeapFrogSimulator simulator = LeapFrogSimulator();
 	//simulator.checkForCollisions(true);
@@ -62,8 +64,11 @@ int main(int argc, char ** argv) {
 	std::vector<Collision *> collisions;
 	std::cout << "Running simulation..." << std::endl;
 
+
 	for (long i = 0; i < 3.15569e7; i++) {
 	//for (long i = 0; i < 1500000; i++) {
+
+
 		simulator.step(1.0, collisions);
 
 		if (collisions.size() > 0) {

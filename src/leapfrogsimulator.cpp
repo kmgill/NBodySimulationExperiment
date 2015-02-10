@@ -50,11 +50,13 @@ namespace apoapsys {
 
 		// TODO: OpenMP
 
-
-		#pragma omp for
+//#pragma omp parallel
+//{
+//		#pragma omp for nowait
 		for (uint p = 0; p < particles.size(); p++) {
 			Particle particle = particles[p];
 			acceleration.reset();
+
 			for (uint fp = 0; fp < forceProviders.size(); fp++) {
 				ForceProvider force = forceProviders[fp];
 				force.onParticle(deltaT, particle, particles, accelSegment);
@@ -68,7 +70,8 @@ namespace apoapsys {
 			particle.velocity.y = MIN(particle.velocity.y, _C);
 			particle.velocity.z = MIN(particle.velocity.z, _C);
 		}
-		#pragma omp barrier
+//}
+		//#pragma omp barrier
 
 	}
 
@@ -114,7 +117,7 @@ namespace apoapsys {
 
 		if (this->_checkForCollisions) {
 
-			#pragma omp parallel for
+
 			for (uint p = 0; p < this->particles.size(); p++) {
 				Particle particle = this->particles[p];
 				Particle * collidesWith = this->checkForCollision(particle);
