@@ -108,7 +108,7 @@ namespace apoapsys {
 		real x = this->x - o.x;
 		real y = this->y - o.y;
 		real z = this->z - o.z;
-		return (real) (SQRT(SQR(x) + SQR(y) + SQR(z)));
+		return (SQRT(SQR(x) + SQR(y) + SQR(z)));
 	}
 
 	real Vector::length() {
@@ -172,8 +172,8 @@ namespace apoapsys {
 	}
 
 	real Vector::angle(Vector & other) {
-		real dot = this->dot(other);
-		real a = acos(CLAMP(dot, -1.0, 1.0));
+		real dot = this->dot(other, true);
+		real a = acos(CLAMP(dot, 1.0, -1.0));
 		return a;
 	}
 

@@ -20,9 +20,7 @@ namespace apoapsys {
 	public:
 		ForceProvider() { }
 		virtual ~ForceProvider() { }
-		virtual void onParticle(real deltaT, Particle & particle, std::vector<Particle> & particles, Vector & into) {
-			// No-Op
-		}
+		virtual void onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector * into) = 0;
 
 	};
 
@@ -30,7 +28,7 @@ namespace apoapsys {
 	class NewtonianGravityForceProvider : public ForceProvider {
 
 	public:
-		void onParticle(real deltaT, Particle & particle, std::vector<Particle> & particles, Vector & into);
+		void onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector * into);
 	};
 
 

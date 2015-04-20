@@ -5,8 +5,11 @@
  *      Author: kgill
  */
 
+#pragma once
+
 #ifndef MATHEXT_H_
 #define MATHEXT_H_
+
 
 #include "common.h"
 #include <math.h>
@@ -67,7 +70,7 @@
 #endif
 
 #ifndef _C
-	#define _C 			1.079253E9
+	#define _C_ 		1.079253E9
 #endif
 
 
@@ -87,14 +90,7 @@
 
 
 
-#define RADIANS(x)				((x) * 0.01745329251994329576923690768489)
-#define DEGREES(x)				((x) * 57.295779513082320876798154814105)
 
-#define CLAMP(x, high, low)		(MAX((low), (MIN((high), (x)))))
-#define ROUND(x)				((int)((x) + 0.5))
-#define ISBETWEEN(x, high, low)	((x) >= (low) && (x) <= (high))
-#define SQR(x)					((x) * (x))
-#define CUBE(x)					((x) * (x) * (x))
 #ifndef MIN
 	#define MIN(a, b)				((a) <= (b) ? (a) : (b))
 #endif
@@ -107,6 +103,15 @@
 	#define ABS(x)					(((x) > 0) ? (x) : ((x) * -1.0))
 #endif
 
+#define RADIANS(x)				((x) * 0.01745329251994329576923690768489)
+#define DEGREES(x)				((x) * 57.295779513082320876798154814105)
+
+#define CLAMP(x, high, low)		(MAX((low), (MIN((high), (x)))))
+#define ROUND(x)				((int)((x) + 0.5))
+#define ISBETWEEN(x, high, low)	((x) >= (low) && (x) <= (high))
+#define SQR(x)					((x) * (x))
+#define CUBE(x)					((x) * (x) * (x))
+
 #define FLOOR(x)				((int) x) // Not really correct, I'm just being lazy at the moment...
 #define CEIL(x)					((int) (x + 0.5)) // Not really correct, either, I'm just being lazy at the moment...
 
@@ -117,6 +122,7 @@
 
 #define SQRT_MAGIC_F 0x5f3759df
 #define SQRT_MAGIC_D 0x5fe6eb50c7b537a9
+
 
 namespace apoapsys {
 	//http://en.wikipedia.org/wiki/Fast_inverse_square_root
@@ -129,7 +135,7 @@ namespace apoapsys {
 		u.x = x;
 		u.i = SQRT_MAGIC_F - (u.i >> 1);
 
-		/* This line can be repeated arbitrarily many times to increase accuracy */
+		// This line can be repeated arbitrarily many times to increase accuracy 
 		u.x = u.x * (1.5f - xhalf * u.x * u.x);
 		u.x = u.x * (1.5f - xhalf * u.x * u.x); // twice should be sufficient for DemKit use
 		//u.x = u.x * (1.5f - xhalf * u.x * u.x); // thrice should be sufficient for DemKit use
@@ -147,9 +153,9 @@ namespace apoapsys {
 		u.x = x;
 		u.i = SQRT_MAGIC_D - (u.i >> 1);
 
-		/* This line can be repeated arbitrarily many times to increase accuracy */
+		// This line can be repeated arbitrarily many times to increase accuracy 
 		u.x = u.x * (1.5 - xhalf * u.x * u.x);
-		u.x = u.x * (1.5f - xhalf * u.x * u.x); // twice should be sufficient for DemKit use
+		u.x = u.x * (1.5 - xhalf * u.x * u.x); // twice should be sufficient for DemKit use
 		//u.x = u.x * (1.5f - xhalf * u.x * u.x); // thrice should be sufficient for DemKit use
 
 		return u.x * x;

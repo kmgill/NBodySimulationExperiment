@@ -5,6 +5,8 @@
  *      Author: kgill
  */
 
+#pragma once
+
 #ifndef PARTICLE_H_
 #define PARTICLE_H_
 
@@ -46,24 +48,24 @@ namespace apoapsys {
 		bool operator==(const Particle & o);
 		bool operator!=(const Particle & o);
 		real getKineticEnergy();
-		real getPotentialEnergy(Particle & other);
-		real getForceOnParticle(Particle & other);
-		real getTotalForceOnParticle(std::vector<Particle> & particles);
-		real getLagrangianForceThreeBody(Particle & center, Particle & outter);
-		real getGravitationalPotential(Particle & center);
-		real getEstimatedOrbitalVelocity(Particle & center);
-		real getCentrifugalForce(Particle & center);
-		real getLegrangianFunction(Particle & center);
-		void getForceVectorOnParticle(Particle & other, Vector & into);
-		void getForceVectorOnParticle(std::vector<Particle> & particles, Vector & into);
-		void getAccelerationAtCurrentTime(Vector & force, Vector & into);
-		void getAccelerationAtCurrentTime(std::vector<Particle> & particles, Vector & into);
+		real getPotentialEnergy(Particle * other);
+		real getForceOnParticle(Particle * other);
+		real getTotalForceOnParticle(std::vector<Particle *> * particles);
+		real getLagrangianForceThreeBody(Particle * center, Particle * outter);
+		real getGravitationalPotential(Particle * center);
+		real getEstimatedOrbitalVelocity(Particle * center);
+		real getCentrifugalForce(Particle * center);
+		real getLegrangianFunction(Particle * center);
+		void getForceVectorOnParticle(Particle * other, Vector * into);
+		void getForceVectorOnParticle(std::vector<Particle *> * particles, Vector * into);
+		void getAccelerationAtCurrentTime(Vector * force, Vector * into);
+		void getAccelerationAtCurrentTime(std::vector<Particle *> * particles, Vector * into);
 		real getAngularMomentumSpinningBody();
-		real getAngularMomentumOrbitingBody(Particle & centerParticle);
-		real getAngularVelocity(Particle & centerParticle);
-		real getEffectivePotentialEnergy(Particle & other);
-		real getEffectivePotentialEnergy(std::vector<Particle> & particles);
-		real getEscapeVelocity(Particle & other);
+		real getAngularMomentumOrbitingBody(Particle * centerParticle);
+		real getAngularVelocity(Particle * centerParticle);
+		real getEffectivePotentialEnergy(Particle * other);
+		real getEffectivePotentialEnergy(std::vector<Particle *> * particles);
+		real getEscapeVelocity(Particle * other);
 		real getEscapeVelocity();
 		//void determineGravitationBinding(std::vector<Particle> & particles);
 		//void getMergedParticle(Particle & other, Particle & into);

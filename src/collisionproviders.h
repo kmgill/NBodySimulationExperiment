@@ -37,9 +37,7 @@ namespace apoapsys {
 		CollisionDetectionProvider() { }
 		virtual ~CollisionDetectionProvider() { }
 
-		virtual bool checkCollision(Particle & p0, Particle & p1) {
-			return false; // No-Op
-		}
+		virtual bool checkCollision(Particle * p0, Particle * p1) = 0;
 
 	};
 
@@ -49,7 +47,7 @@ namespace apoapsys {
 
 	public:
 
-		bool checkCollision(Particle & p0, Particle & p1);
+		bool checkCollision(Particle * p0, Particle * p1);
 
 	};
 	/*

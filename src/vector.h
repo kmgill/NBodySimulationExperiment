@@ -59,8 +59,8 @@ namespace apoapsys {
 		void reset();
 	};
 
-
-
 };
+
+
 
 #endif /* VECTOR_H_ */

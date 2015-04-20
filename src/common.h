@@ -9,9 +9,7 @@
 #define COMMON_H_
 
 
-#include <inttypes.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
+
 
 #ifdef _MSC_VER
   #define INLINE __forceinline /* use __forceinline (VC++ specific) */
@@ -19,11 +17,21 @@
   #define INLINE inline        /* use standard inline */
 #endif
 
+#ifndef WIN32
+
+#include <inttypes.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+
 typedef uint64_t __int64;
 typedef uint32_t __int32;
 typedef uint16_t __int16;
 typedef uint8_t __int8;
 
+#else 
+typedef unsigned int uint;
+
+#endif
 
 #define PTRDELETE(x)							if (x != NULL) { delete(x); x = NULL; }
 #define PTRDELETE_A(x)							if (x != NULL) { delete[](x); x = NULL; }

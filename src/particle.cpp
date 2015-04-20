@@ -7,12 +7,12 @@
 
 
 
-
+#include <vector>
 #include "common.h"
 #include "mathext.h"
 #include "vector.h"
 #include "particle.h"
-#include <vector>
+
 
 namespace apoapsys {
 
@@ -43,7 +43,7 @@ namespace apoapsys {
 
 	}
 
-	real Particle::getPotentialEnergy(Particle & other) {
+	real Particle::getPotentialEnergy(Particle * other) {
 		/*
 		 * double m = body.getMass();
 		double M = body.getMass();
@@ -51,22 +51,22 @@ namespace apoapsys {
 		double U =  ((-Constants.G * m * M) / r) + Constants.K;
 		return U;
 		 */
-		real r = this->position.distanceTo(other.position);
-		real U = ((-_G * this->mass * other.mass) / r) + _K;
+		real r = this->position.distanceTo(other->position);
+		real U = ((-_G * this->mass * other->mass) / r) + _K;
 		return U;
 	}
 
-	real Particle::getForceOnParticle(Particle & other) {
+	real Particle::getForceOnParticle(Particle * other) {
 		/*double d = other.position.getDistanceTo(position);
 		double F = (Constants.G * body.getMass() * other.body.getMass()) / (d * d);
 		return F;
 		*/
-		real d = other.position.distanceTo(this->position);
-		real F = (_G * this->mass * other.mass) / SQR(d);
+		real d = other->position.distanceTo(this->position);
+		real F = (_G * this->mass * other->mass) / SQR(d);
 		return F;
 	}
 
-	real Particle::getTotalForceOnParticle(std::vector<Particle> & particles) {
+	real Particle::getTotalForceOnParticle(std::vector<Particle *> * particles) {
 		/*
 		 * Vector F = new Vector();
 		for (Particle particle : particles) {
@@ -83,11 +83,12 @@ namespace apoapsys {
 		Vector F(0.0, 0.0, 0.0);
 		Vector f(0.0, 0.0, 0.0);
 
-		for (uint i = 0; i < particles.size(); i++) {
-			Particle p = particles[i];
+		for (uint i = 0; i < particles->size(); i++) {
+			
+			Particle * p = particles->at(i);
 
-			if (*this != p) {
-				this->getForceVectorOnParticle(p, f);
+			if (this->identifier != p->identifier) {
+				this->getForceVectorOnParticle(p, &f);
 				F += f;
 			}
 		}
@@ -96,7 +97,7 @@ namespace apoapsys {
 		return g;
 	}
 
-	real Particle::getLagrangianForceThreeBody(Particle & center, Particle & outter) {
+	real Particle::getLagrangianForceThreeBody(Particle * center, Particle * outter) {
 
 		/*
 		 * 		Vector F = new Vector();
@@ -120,23 +121,23 @@ namespace apoapsys {
 		Vector F(0.0, 0.0, 0.0);
 		Vector f;
 
-		this->getForceVectorOnParticle(center, f);
+		this->getForceVectorOnParticle(center, &f);
 		F += f;
 
-		this->getForceVectorOnParticle(outter, f);
+		this->getForceVectorOnParticle(outter, &f);
 		F += f;
 
 		//real w = this->getAngularVelocity(center);
 		//real m = this->mass;
 		//real r = this->position.distanceTo(center.position);
 
-		this->getForceVectorOnParticle(center, f);
+		this->getForceVectorOnParticle(center, &f);
 		real Fc = f.length();
 		double Fq = F.length();
 		return Fq - Fc;
 	}
 
-	real Particle::getGravitationalPotential(Particle & center) {
+	real Particle::getGravitationalPotential(Particle * center) {
 		/*
 		 * double m = body.getMass();
 		double M = center.body.getMass();
@@ -150,16 +151,16 @@ namespace apoapsys {
 		 */
 
 		real m = this->mass;
-		real M = center.mass;
-		real r0 = this->previousPosition.distanceTo(center.previousPosition);
-		real r = this->position.distanceTo(center.position);
+		real M = center->mass;
+		real r0 = this->previousPosition.distanceTo(center->previousPosition);
+		real r = this->position.distanceTo(center->position);
 		real tr = r - r0;
 		real phi = this->getAngularVelocity(center);
 		real E = .5 * m + ((tr * tr) + (r * r) * (phi * phi)) - ((_G * m * M) / r);
 		return E;
 	}
 
-	real Particle::getEstimatedOrbitalVelocity(Particle & center) {
+	real Particle::getEstimatedOrbitalVelocity(Particle * center) {
 		/*
 		 * double m = body.getMass();
 		double M = center.body.getMass();
@@ -173,15 +174,15 @@ namespace apoapsys {
 		 */
 
 		real m = this->mass;
-		real M = center.mass;
-		real r = this->position.distanceTo(center.position);
+		real M = center->mass;
+		real r = this->position.distanceTo(center->position);
 		real Y = _G * (m + M);
 		real X = r;
 		real v = SQRT(Y / X);
 		return v;
 	}
 
-	real Particle::getCentrifugalForce(Particle & center) {
+	real Particle::getCentrifugalForce(Particle * center) {
 		/*
 		 * 		double r = position.getDistanceTo(center.position);
 
@@ -196,7 +197,7 @@ namespace apoapsys {
 		return f;
 		 */
 
-		real r = this->position.distanceTo(center.position);
+		real r = this->position.distanceTo(center->position);
 		real v = SQRT(SQR(this->velocity.x) + SQR(this->velocity.z));
 		real w = r / v;
 		real m = this->mass;
@@ -205,7 +206,7 @@ namespace apoapsys {
 
 	}
 
-	real Particle::getLegrangianFunction(Particle & center) {
+	real Particle::getLegrangianFunction(Particle * center) {
 		/*
 		 * double T = this.getKineticEnergy();
 		double V = this.getPotentialEnergy(center);
@@ -219,7 +220,7 @@ namespace apoapsys {
 		return L;
 	}
 
-	void Particle::getForceVectorOnParticle(Particle & other, Vector & into) {
+	void Particle::getForceVectorOnParticle(Particle * other, Vector * into) {
 		/*
 		 * double dX = other.position.x - position.x;
 		double dY = other.position.y - position.y;
@@ -239,22 +240,15 @@ namespace apoapsys {
 		return into;
 		 */
 
-		real dX = other.position.x - this->position.x;
-		real dY = other.position.y - this->position.y;
-		real dZ = other.position.z - this->position.z;
-		real d = other.position.distanceTo(this->position);
+		real d = other->position.distanceTo(this->position);
+		real F = (_G * this->mass * other->mass) / (SQR(d));
 
-		real F = (_G * this->mass * other.mass) / (SQR(d));
-		real fX0 = F * dX / d;
-		real fY0 = F * dY / d;
-		real fZ0 = F * dZ / d;
-
-		into.x = fX0;
-		into.y = fY0;
-		into.z = fZ0;
+		into->x = F * (other->position.x - this->position.x) / d;
+		into->y = F * (other->position.y - this->position.y) / d;
+		into->z = F * (other->position.z - this->position.z) / d;
 	}
 
-	void Particle::getForceVectorOnParticle(std::vector<Particle> & particles, Vector & into) {
+	void Particle::getForceVectorOnParticle(std::vector<Particle *> * particles, Vector * into) {
 		/*
 		 * for (Particle other : particles) {
 
@@ -277,27 +271,32 @@ namespace apoapsys {
 		return into;
 		 */
 
-		into.x = into.y = into.z = 0.0;
-
-		for (uint i = 0; i < particles.size(); i++) {
-			Particle other = particles[i];
-
-			if (*this != other) {
-				real d = this->position.distanceTo(other.position);
-				if (d / 1000.0 < (this->radius + other.radius)) {
-					continue;
-				}
-
-				Vector forceFromOther;
-				this->getForceVectorOnParticle(other, forceFromOther);
-
-				into += forceFromOther;
+		into->x = into->y = into->z = 0.0;
+		Vector forceFromOther;
+		for (uint i = 0; i < particles->size(); i++) {
+			Particle * other = particles->at(i);
+			
+			if (this->identifier != other->identifier) {
+				
+				//real d = this->position.distanceTo(other->position);
+				//if (d / 1000.0 < (this->radius + other->radius)) {
+				//	continue;
+				//}
+				
+				
+				this->getForceVectorOnParticle(other, &forceFromOther);
+				
+				into->x += forceFromOther.x;
+				into->y += forceFromOther.y;
+				into->z += forceFromOther.z;
+				
 			}
+			
 		}
 
 	}
 
-	void Particle::getAccelerationAtCurrentTime(Vector & force, Vector & into) {
+	void Particle::getAccelerationAtCurrentTime(Vector * force, Vector * into) {
 		/*
 		 * 		double aX = force.x / body.getMass();
 		double aY = force.y / body.getMass();
@@ -324,13 +323,13 @@ namespace apoapsys {
 
 
 
-		into.x = force.x / this->mass;
-		into.y = force.y / this->mass;
-		into.z = force.z / this->mass;
+		into->x = force->x / this->mass;
+		into->y = force->y / this->mass;
+		into->z = force->z / this->mass;
 
 	}
 
-	void Particle::getAccelerationAtCurrentTime(std::vector<Particle> & particles, Vector & into) {
+	void Particle::getAccelerationAtCurrentTime(std::vector<Particle *> * particles, Vector * into) {
 		/*
 		 *
 		getForceVectorOnParticle(particles, forceOnParticles);
@@ -340,8 +339,8 @@ namespace apoapsys {
 		 */
 
 		Vector forceOnParticles;
-		this->getForceVectorOnParticle(particles, forceOnParticles);
-		this->getAccelerationAtCurrentTime(forceOnParticles, into);
+		this->getForceVectorOnParticle(particles, &forceOnParticles);
+		this->getAccelerationAtCurrentTime(&forceOnParticles, into);
 	}
 
 	real Particle::getAngularMomentumSpinningBody() {
@@ -358,7 +357,7 @@ namespace apoapsys {
 		return L;
 	}
 
-	real Particle::getAngularMomentumOrbitingBody(Particle & centerParticle) {
+	real Particle::getAngularMomentumOrbitingBody(Particle * centerParticle) {
 		/*
 		 * double m = body.getMass();
 		double R = position.getDistanceTo(centerParticle.position);
@@ -370,7 +369,7 @@ namespace apoapsys {
 		 */
 
 		real m = this->mass;
-		real R = this->position.distanceTo(centerParticle.position);
+		real R = this->position.distanceTo(centerParticle->position);
 		real l = m * SQR(R);
 		real T = 0.1;
 		real w = 2.0 * PI / T;
@@ -378,7 +377,7 @@ namespace apoapsys {
 		return L;
 	}
 
-	real Particle::getAngularVelocity(Particle & centerParticle) {
+	real Particle::getAngularVelocity(Particle * centerParticle) {
 		/*
 		 * double v = MathExt.sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 		double r = position.getDistanceTo(centerParticle.position);
@@ -387,12 +386,12 @@ namespace apoapsys {
 		 */
 
 		real v = SQRT(SQR(this->velocity.x) + SQR(this->velocity.z));
-		real r = this->position.distanceTo(centerParticle.position);
+		real r = this->position.distanceTo(centerParticle->position);
 		real w = v / r;
 		return w;
 	}
 
-	real Particle::getEffectivePotentialEnergy(Particle & other) {
+	real Particle::getEffectivePotentialEnergy(Particle * other) {
 		/*
 		 * double r = this.position.getDistanceTo(other.position);
 
@@ -406,15 +405,15 @@ namespace apoapsys {
 		return effectivePotential;
 		 */
 
-		real r = this->position.distanceTo(other.position);
+		real r = this->position.distanceTo(other->position);
 		real L = this->getAngularMomentumOrbitingBody(other);
 		real m = this->mass;
-		real M = other.mass;
+		real M = other->mass;
 		real eP = ((L * L) / (2.0 * m * (r * r))) - ((_G * m * M) / r);
 		return eP;
 	}
 
-	real Particle::getEffectivePotentialEnergy(std::vector<Particle> & particles) {
+	real Particle::getEffectivePotentialEnergy(std::vector<Particle *> * particles) {
 		/*
 		 * 		double ttlEnergy = 0.0;
 
@@ -427,24 +426,24 @@ namespace apoapsys {
 		 */
 
 		real ttlEnergy = 0.0;
-		for (uint i = 0; i < particles.size(); i++) {
-			Particle other = particles[i];
-			if (*this != other) {
+		for (uint i = 0; i < particles->size(); i++) {
+			Particle * other = particles->at(i);
+			if (this->identifier != other->identifier) {
 				ttlEnergy += this->getEffectivePotentialEnergy(other);
 			}
 		}
 		return 1.0 / this->mass * ttlEnergy;
 	}
 
-	real Particle::getEscapeVelocity(Particle & other) {
+	real Particle::getEscapeVelocity(Particle * other) {
 		/*
 		 * double r = other.position.getDistanceTo(position);
 		double v = MathExt.sqrt((2 * Constants.G * other.body.getMass()) / r);
 		return v;
 		 */
 
-		real r = other.position.distanceTo(this->position);
-		real v = SQRT((2 * _G * other.mass) / r);
+		real r = other->position.distanceTo(this->position);
+		real v = SQRT((2 * _G * other->mass) / r);
 		return v;
 	}
 

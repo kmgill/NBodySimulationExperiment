@@ -5,6 +5,7 @@
  *      Author: kgill
  */
 
+
 #include "common.h"
 #include "particle.h"
 #include "vector.h"
@@ -16,11 +17,12 @@
 namespace apoapsys {
 
 
-	void NewtonianGravityForceProvider::onParticle(real deltaT, Particle & particle, std::vector<Particle> & particles, Vector & into) {
-		particle.getAccelerationAtCurrentTime(particles, into);
+	void NewtonianGravityForceProvider::onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector * into) {
+		particle->getAccelerationAtCurrentTime(particles, into);
 	}
 
 
 };
+
 
 
