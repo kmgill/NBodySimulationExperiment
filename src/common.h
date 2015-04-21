@@ -8,13 +8,24 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
+// Preprocessor Configurations
+#define NBODY_USE_FAST_SQRT            1
+#define NBODY_COMPILE_SNAPSHOTS        1
 
 
+#ifdef WIN32
+
+// Sort of a no-op for now. Placeholder for dllexport/dllimport
+#define LIB_NBODY_API
 
 #ifdef _MSC_VER
   #define INLINE __forceinline /* use __forceinline (VC++ specific) */
 #else
   #define INLINE inline        /* use standard inline */
+#endif
+
+#else
+#define LIB_NBODY_API
 #endif
 
 #ifndef WIN32

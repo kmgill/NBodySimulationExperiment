@@ -15,20 +15,20 @@
 
 namespace apoapsys {
 
-	class ForceProvider {
+	LIB_NBODY_API class ForceProvider{
 
 	public:
 		ForceProvider() { }
 		virtual ~ForceProvider() { }
-		virtual void onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector * into) = 0;
+		virtual void onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector<real> * into) = 0;
 
 	};
 
 
-	class NewtonianGravityForceProvider : public ForceProvider {
+	LIB_NBODY_API class NewtonianGravityForceProvider : public ForceProvider{
 
 	public:
-		void onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector * into);
+		void onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector<real> * into);
 	};
 
 

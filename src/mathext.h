@@ -162,10 +162,11 @@ namespace apoapsys {
 	}
 };
 
-
-
+#if NBODY_USE_FAST_SQRT
 #define SQRT(x)				apoapsys::fast_sqrt_d(x)
-
+#else
+#define SQRT(x)				sqrt(x)
+#endif
 
 
 #endif /* MATHEXT_H_ */

@@ -46,53 +46,47 @@ namespace apoapsys {
 	}
 
 	void LeapFrogSimulator::stepVelocityVectors(real deltaT) {
-		Vector acceleration;
-		Vector accelSegment;
+		
+		
+		size_t numParticles = particles.size();
 
-		// TODO: OpenMP
+#pragma omp parallel for
+		for (int p = 0; p < numParticles; p++) {
+			Vector<real> acceleration;
+			Vector<real> accelSegment;
 
-//#pragma omp parallel
-//{
-//#pragma omp for nowait
-		for (int p = 0; p < particles.size(); p++) {
 			Particle * particle = particles[p];
-			acceleration.reset();
 
-			
 			for (int fp = 0; fp < forceProviders.size(); fp++) {
 				ForceProvider * force = forceProviders[fp];
 				force->onParticle(deltaT, particle, &particles, &accelSegment);
 				acceleration += accelSegment;
 			}
 			
-			//std::cout << "Force: " << acceleration.length() << " from " << forceProviders.size() << " force providers" << std::endl;
 			particle->velocity.copyInto(particle->previousVelocity);
-			particle->velocity.x += deltaT * acceleration.x;
-			particle->velocity.y += deltaT * acceleration.y;
-			particle->velocity.z += deltaT * acceleration.z;
-
-			particle->velocity.x = MIN(particle->velocity.x, _C_);
-			particle->velocity.y = MIN(particle->velocity.y, _C_);
-			particle->velocity.z = MIN(particle->velocity.z, _C_);
+			particle->velocity += (acceleration * deltaT);
 		}
-//}
-	//	#pragma omp barrier
+
 
 	}
 
 	void LeapFrogSimulator::stepPositionVectors(real deltaT) {
 
-		// TODO: OpenMP
-		for (uint p = 0; p < particles.size(); p++) {
+		size_t numParticles = particles.size();
+#pragma omp parallel for
+		for (int p = 0; p < numParticles; p++) {
 			Particle * particle = particles[p];
 			particle->position.copyInto(particle->previousPosition);
-			particle->position.x += deltaT * particle->velocity.x;
-			particle->position.y += deltaT * particle->velocity.y;
-			particle->position.z += deltaT * particle->velocity.z;
+			particle->position += (particle->velocity * deltaT);
 		}
 	}
 
 	Particle * LeapFrogSimulator::checkForCollision(Particle * particle) {
+
+		if (!particle->enabled) {
+			return NULL;
+		}
+
 		if (this->collisionProviders.size() == 0) {
 			return NULL;
 		}
@@ -103,11 +97,12 @@ namespace apoapsys {
 
 		for (uint p = 0; p < this->particles.size(); p++) {
 			Particle * other = this->particles[p];
-
-			for (uint cp = 0; cp < this->collisionProviders.size(); cp++) {
-				CollisionDetectionProvider * collisionProvider = this->collisionProviders[cp];
-				if (collisionProvider->checkCollision(particle, other)) {
-					return this->particles[p];
+			if (other->enabled) {
+				for (uint cp = 0; cp < this->collisionProviders.size(); cp++) {
+					CollisionDetectionProvider * collisionProvider = this->collisionProviders[cp];
+					if (collisionProvider->checkCollision(particle, other)) {
+						return this->particles[p];
+					}
 				}
 			}
 		}
@@ -116,20 +111,33 @@ namespace apoapsys {
 	}
 
 
-	void LeapFrogSimulator::step(real deltaT, std::vector<Collision *> & collisions) {
+	void LeapFrogSimulator::step(real deltaT, std::vector<Collision *> * collisions) {
 		stepVelocityVectors(deltaT);
 		stepPositionVectors(deltaT);
 
-		if (this->_checkForCollisions) {
+		if (this->_checkForCollisions && collisions != NULL) {
 
-
-			for (uint p = 0; p < this->particles.size(); p++) {
+			size_t numParticles = this->particles.size();
+#pragma omp parallel for
+			for (int p = 0; p < numParticles; p++) {
 				Particle * particle = this->particles[p];
 				Particle * collidesWith = this->checkForCollision(particle);
 
 				if (collidesWith != NULL) {
+
+					// This isn't exactly how it works, but for now...
+					if (particle->mass > collidesWith->mass) {
+						collidesWith->enabled = false;
+						particle->mass += collidesWith->mass;
+						particle->velocity += collidesWith->velocity;
+					} else {
+						particle->enabled = false;
+						collidesWith->mass += particle->mass;
+						collidesWith->velocity += particle->velocity;
+					}
+
 					Collision * collision = new Collision(particle, collidesWith);
-					collisions.push_back(collision);
+					collisions->push_back(collision);
 				}
 			}
 		}

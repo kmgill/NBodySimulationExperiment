@@ -27,6 +27,10 @@ namespace apoapsys {
 			return false;
 		}
 
+		if (!p0->enabled || !p1->enabled) {
+			return false;
+		}
+
 		// Cannot collide with something that lacks volume
 		if (p0->radius == 0.0 || p1->radius == 0.0) {
 			return false;

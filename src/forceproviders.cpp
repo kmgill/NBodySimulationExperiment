@@ -17,7 +17,7 @@
 namespace apoapsys {
 
 
-	void NewtonianGravityForceProvider::onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector * into) {
+	void NewtonianGravityForceProvider::onParticle(real deltaT, Particle * particle, std::vector<Particle *> * particles, Vector<real> * into) {
 		particle->getAccelerationAtCurrentTime(particles, into);
 	}
 

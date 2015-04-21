@@ -18,7 +18,7 @@
 
 namespace apoapsys {
 
-	class LeapFrogSimulator {
+	LIB_NBODY_API class LeapFrogSimulator {
 	private:
 		std::vector<Particle *> particles;
 		std::vector<ForceProvider *> forceProviders;
@@ -39,7 +39,7 @@ namespace apoapsys {
 		void addForceProvider(ForceProvider * forceProvider);
 		void addCollisionProvider(CollisionDetectionProvider * collisionProvider);
 
-		void step(real deltaT, std::vector<Collision *> & collisions);
+		void step(real deltaT, std::vector<Collision *> * collisions = NULL);
 	};
 
 };

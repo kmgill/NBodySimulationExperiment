@@ -20,18 +20,21 @@
 
 namespace apoapsys {
 
-	class Collision {
+	LIB_NBODY_API class Collision{
 
 	public:
 		Particle * particle0;
 		Particle * particle1;
-		Particle merged;
 
 		Collision(Particle * _particle0, Particle * _particle1);
+		~Collision() {
+			particle0 = NULL;
+			particle1 = NULL;
+		}
 
 	};
 
-	class CollisionDetectionProvider {
+	LIB_NBODY_API class CollisionDetectionProvider{
 
 	public:
 		CollisionDetectionProvider() { }
@@ -43,37 +46,13 @@ namespace apoapsys {
 
 
 
-	class DefaultCollisionDetectionProvider : public CollisionDetectionProvider {
+	LIB_NBODY_API class DefaultCollisionDetectionProvider : public CollisionDetectionProvider{
 
 	public:
 
 		bool checkCollision(Particle * p0, Particle * p1);
 
 	};
-	/*
-	 * public class DefaultCollisionDetectionProviderImpl implements CollisionDetectionProvider {
-
-	@Override
-	public boolean checkCollision(Particle p0, Particle p1) {
-
-		if (p0.equals(p1)) {
-			return false; // Cannot collide with one's self
-		}
-
-		if (p0.body.getRadius() == 0.0 || p1.body.getRadius() == 0.0) {
-			return false; // Cannot collide with something that has no volume
-		}
-
-		double d = p0.position.getDistanceTo(p1.position);
-		if ((p0.body.getRadius() + p1.body.getRadius()) > d / 1000.0 ) {
-			return true;
-		}
-
-		return false;
-	}
-
-}
-	 */
 
 };
 

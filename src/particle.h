@@ -15,35 +15,30 @@
 #include "vector.h"
 
 #include <vector>
+#include <string>
 
 
 namespace apoapsys {
 
-	/*
-	 * 	public String identifier;
-	public SingleBody body;
-	public Vector position;
-	public Vector velocity;
-	public Vector previousPosition = new Vector();
-	public Vector previousVelocity = new Vector();
-	 *
-	 */
-	class Particle {
+	LIB_NBODY_API class Particle {
 
 	public:
+		std::string name;
 		int identifier;
 
-		Vector position;
-		Vector velocity;
+		Vector<real> position;
+		Vector<real> velocity;
 
-		Vector previousPosition;
-		Vector previousVelocity;
+		Vector<real> previousPosition;
+		Vector<real> previousVelocity;
 
 		real radius;
 		real mass;
 
+		bool enabled;
+
 		Particle();
-		Particle(int _id, real _radius, real _mass);
+		Particle(std::string _name,  int _id, real _radius, real _mass);
 
 		bool operator==(const Particle & o);
 		bool operator!=(const Particle & o);
@@ -56,10 +51,10 @@ namespace apoapsys {
 		real getEstimatedOrbitalVelocity(Particle * center);
 		real getCentrifugalForce(Particle * center);
 		real getLegrangianFunction(Particle * center);
-		void getForceVectorOnParticle(Particle * other, Vector * into);
-		void getForceVectorOnParticle(std::vector<Particle *> * particles, Vector * into);
-		void getAccelerationAtCurrentTime(Vector * force, Vector * into);
-		void getAccelerationAtCurrentTime(std::vector<Particle *> * particles, Vector * into);
+		void getForceVectorOnParticle(Particle * other, Vector<real> * into);
+		void getForceVectorOnParticle(std::vector<Particle *> * particles, Vector<real> * into);
+		void getAccelerationAtCurrentTime(Vector<real> * force, Vector<real> * into);
+		void getAccelerationAtCurrentTime(std::vector<Particle *> * particles, Vector<real> * into);
 		real getAngularMomentumSpinningBody();
 		real getAngularMomentumOrbitingBody(Particle * centerParticle);
 		real getAngularVelocity(Particle * centerParticle);
