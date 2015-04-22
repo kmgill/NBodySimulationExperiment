@@ -10,6 +10,7 @@
 
 
 #include "common.h"
+#include "mathext.h"
 
 namespace apoapsys {
 

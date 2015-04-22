@@ -25,12 +25,11 @@
 
 // Basic configuration
 #define NBODY_ITERATION_INTERVAL         1.0
-#define NBODY_NUM_ITERATIONS             100000
-//(86400 * 365 * 10)
+#define NBODY_NUM_ITERATIONS             (86400 * 365 * 1)
 #define NBODY_CHECK_COLLISIONS           false
 #define NBODY_ALLOW_MAJOR_BODIES         true
 #define NBODY_ALLOW_MINOR_BODIES         false
-#define NBODY_ALLOW_MOONS                true
+#define NBODY_ALLOW_MOONS                false
 #define NBODY_SET_CPU_AFFINITY           false
 
 #ifdef _DEBUG
@@ -90,6 +89,9 @@ int main(int argc, char ** argv) {
 
 	std::cout << "Adding simulated bodies..." << std::endl;
 
+	Particle * sun = NULL;
+	Particle * earth = NULL;
+
 	uint bodiesAdded = 0;
 	for (int b = 0; b < apoapsys::snapshots.size(); b++) {
 		BodySnapshot * snapshot = apoapsys::snapshots[b];
@@ -98,6 +100,13 @@ int main(int argc, char ** argv) {
 			|| (NBODY_ALLOW_MOONS && snapshot->bodyType == BODY_IS_MOON)) { 
 			Particle * particle = createParticleFromSnapshot(snapshot);
 			simulator.addParticle(particle);
+
+			if (particle->identifier == 1000000) {
+				sun = particle;
+			}
+			if (particle->identifier == 1000300) {
+				earth = particle;
+			}
 			bodiesAdded++;
 		}
 	}
@@ -113,11 +122,15 @@ int main(int argc, char ** argv) {
 
 		simulator.step(NBODY_ITERATION_INTERVAL, collisions);
 
+		if (i % (86400) == 0) {
+			std::cout << "Earth/Sun Distance: " << earth->position.distanceTo(sun->position) << std::endl;
+		}
+
 		if (NBODY_CHECK_COLLISIONS && collisions->size() > 0) {
 
 			for (uint c = 0; c < collisions->size(); c++) {
 				Collision * collision = collisions->at(c);
-				std::cout << "Body '" << collision->particle0->name << "' collided with body '" << collision->particle1->name << "'" << std::endl;
+				std::cout << "Body '" << collision->particle0->name << "' collided with body '" << collision->particle1->name << "' on iteration #" << i << std::endl;
 			}
 
 			cleanCollisions(collisions);
