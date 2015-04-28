@@ -25,7 +25,7 @@
 
 // Basic configuration
 #define NBODY_ITERATION_INTERVAL         1.0
-#define NBODY_NUM_ITERATIONS             (86400 * 365 * 1)
+#define NBODY_NUM_ITERATIONS             (86400 * 365 * 10)
 #define NBODY_CHECK_COLLISIONS           false
 #define NBODY_ALLOW_MAJOR_BODIES         true
 #define NBODY_ALLOW_MINOR_BODIES         false
@@ -123,7 +123,8 @@ int main(int argc, char ** argv) {
 		simulator.step(NBODY_ITERATION_INTERVAL, collisions);
 
 		if (i % (86400) == 0) {
-			std::cout << "Earth/Sun Distance: " << earth->position.distanceTo(sun->position) << std::endl;
+			real distAU = earth->position.distanceTo(sun->position) / 149597870700.0;
+			std::cout << "Earth/Sun Distance: " << distAU << " AU, Earth Velocity: " << (earth->velocity.length() / 1000.0) << "km/s" << std::endl;
 		}
 
 		if (NBODY_CHECK_COLLISIONS && collisions->size() > 0) {
