@@ -147,7 +147,7 @@ namespace apoapsys {
 		for (uint i = 0; i < particles->size(); i++) {
 			Particle * other = particles->at(i);
 			
-			if (this->identifier != other->identifier && other->enabled) {
+			if (this->enabled && other->enabled && this->identifier != other->identifier) {
 				
 				this->getForceVectorOnParticle(other, &forceFromOther);
 				
