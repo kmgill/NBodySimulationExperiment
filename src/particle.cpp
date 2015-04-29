@@ -159,7 +159,7 @@ namespace apoapsys {
 	}
 
 	void Particle::getAccelerationAtCurrentTime(Vector<real> * force, Vector<real> * into) {
-		into->set(*force / this->mass);
+		into->set(force->x / this->mass, force->y / this->mass, force->z / this->mass);
 	}
 
 	void Particle::getAccelerationAtCurrentTime(std::vector<Particle *> * particles, Vector<real> * into) {

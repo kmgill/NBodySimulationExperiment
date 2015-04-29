@@ -18,6 +18,7 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
+#include "init.h"
 
 #ifdef WIN32
 	#include <Windows.h>
@@ -41,28 +42,8 @@
 
 using namespace apoapsys;
 
-namespace apoapsys {
-	Particle * createParticleFromSnapshot(BodySnapshot * snapshot) {
-		Particle * particle = new Particle(snapshot->name, snapshot->identifier, snapshot->radius, snapshot->mass);
 
-		snapshot->position.copyInto(particle->position);
-		snapshot->position.copyInto(particle->previousPosition);
-		snapshot->velocity.copyInto(particle->velocity);
-		snapshot->velocity.copyInto(particle->previousVelocity);
-
-		return particle;
-	}
-
-
-	void cleanCollisions(std::vector<Collision *> * collisions) {
-		while (!collisions->empty()) {
-			Collision * c = collisions->at(0);
-			collisions->erase(collisions->begin());
-			delete c; 
-		}
-	}
-};
-
+#if !USING_GTK_MAIN
 int main(int argc, char ** argv) {
 
 
@@ -77,59 +58,26 @@ int main(int argc, char ** argv) {
 
 	std::cout << "Num OpenMP Threads: " << omp_get_num_threads() << std::endl;
 	std::cout << "Initializing Simulator Engine..." << std::endl;
-	LeapFrogSimulator simulator = LeapFrogSimulator();
 
-	std::cout << "Adding general force providers..." << std::endl;
-	NewtonianGravityForceProvider * newtonForceProvider = new NewtonianGravityForceProvider();
-	simulator.addForceProvider(newtonForceProvider);
-
-	std::cout << "Adding collision detectors..." << std::endl;
-	DefaultCollisionDetectionProvider * collisionProvider = new DefaultCollisionDetectionProvider();
-	simulator.addCollisionProvider(collisionProvider);
-	simulator.checkForCollisions(NBODY_CHECK_COLLISIONS);
-
-	std::cout << "Adding simulated bodies..." << std::endl;
-
-	Particle * sun = NULL;
-	Particle * earth = NULL;
-
-	uint bodiesAdded = 0;
-	for (int b = 0; b < apoapsys::snapshots.size(); b++) {
-		BodySnapshot * snapshot = apoapsys::snapshots[b];
-		if ((NBODY_ALLOW_MAJOR_BODIES && snapshot->bodyType == BODY_IS_MAJOR)
-			|| (NBODY_ALLOW_MINOR_BODIES && snapshot->bodyType == BODY_IS_MINOR)
-			|| (NBODY_ALLOW_MOONS && snapshot->bodyType == BODY_IS_MOON)) { 
-			Particle * particle = createParticleFromSnapshot(snapshot);
-			simulator.addParticle(particle);
-
-			if (particle->identifier == 1000000) {
-				sun = particle;
-			}
-			if (particle->identifier == 1000300) {
-				earth = particle;
-			}
-			bodiesAdded++;
-		}
-	}
-	std::cout << "Added " << bodiesAdded << " bodies" << std::endl;
+	LeapFrogSimulator * simulator = createBasicLeapFrogSimulator(NBODY_ALLOW_MAJOR_BODIES, NBODY_ALLOW_MOONS, NBODY_ALLOW_MINOR_BODIES);
 
 	std::vector<Collision *> * collisions = new std::vector<Collision *>();
 	std::cout << "Running simulation..." << std::endl;
 
 	time_t t_start = time(NULL);
 
-
 	for (long i = 0; i < NBODY_NUM_ITERATIONS; i++) {
 
-		simulator.step(NBODY_ITERATION_INTERVAL, collisions);
+		simulator->step(NBODY_ITERATION_INTERVAL);
 
 		if (i % (86400) == 0) {
-			real distAU = earth->position.distanceTo(sun->position) / 149597870700.0;
-			std::cout << "Earth/Sun Distance: " << distAU << " AU, Earth Velocity: " << (earth->velocity.length() / 1000.0) << "km/s" << std::endl;
+		//	real distAU = earth->position.distanceTo(sun->position) / 149597870700.0;
+		//	std::cout << "Earth/Sun Distance: " << distAU << " AU, Earth Velocity: " << (earth->velocity.length() / 1000.0) << "km/s" << std::endl;
 		}
 
-		if (NBODY_CHECK_COLLISIONS && collisions->size() > 0) {
+		if (NBODY_CHECK_COLLISIONS) {
 
+			simulator->runCollisionDetection(collisions);
 			for (uint c = 0; c < collisions->size(); c++) {
 				Collision * collision = collisions->at(c);
 				std::cout << "Body '" << collision->particle0->name << "' collided with body '" << collision->particle1->name << "' on iteration #" << i << std::endl;
@@ -155,5 +103,5 @@ int main(int argc, char ** argv) {
 	return 0;
 }
 
-
+#endif
 

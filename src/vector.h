@@ -43,6 +43,10 @@ namespace apoapsys {
 			return this->set(other.x, other.y, other.z);
 		}
 
+		Vector<T> set(Vector<T> * other) {
+					return this->set(other->x, other->y, other->z);
+				}
+
 		Vector<T> set(T _x, T _y, T _z) {
 			this->x = _x;
 			this->y = _y;

@@ -24,8 +24,6 @@ namespace apoapsys {
 		std::vector<ForceProvider *> forceProviders;
 		std::vector<CollisionDetectionProvider *> collisionProviders;
 
-		bool _checkForCollisions;
-
 		void stepVelocityVectors(real deltaT);
 		void stepPositionVectors(real deltaT);
 		Particle * checkForCollision(Particle * particle);
@@ -34,12 +32,12 @@ namespace apoapsys {
 		LeapFrogSimulator();
 		~LeapFrogSimulator();
 
-		void checkForCollisions(bool c);
 		void addParticle(Particle * particle);
 		void addForceProvider(ForceProvider * forceProvider);
 		void addCollisionProvider(CollisionDetectionProvider * collisionProvider);
 
-		void step(real deltaT, std::vector<Collision *> * collisions = NULL);
+		void runCollisionDetection(std::vector<Collision *> * collisions);
+		void step(real deltaT);
 	};
 
 };

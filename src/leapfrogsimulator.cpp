@@ -20,8 +20,7 @@
 
 namespace apoapsys {
 
-	LeapFrogSimulator::LeapFrogSimulator()
-		: _checkForCollisions(false) {
+	LeapFrogSimulator::LeapFrogSimulator() {
 
 	}
 
@@ -29,9 +28,6 @@ namespace apoapsys {
 
 	}
 
-	void LeapFrogSimulator::checkForCollisions(bool c) {
-		this->_checkForCollisions = c;
-	}
 
 	void LeapFrogSimulator::addParticle(Particle * particle) {
 		this->particles.push_back(particle);
@@ -50,7 +46,7 @@ namespace apoapsys {
 		
 		size_t numParticles = particles.size();
 
-#pragma omp parallel for
+#pragma omp for
 		for (int p = 0; p < numParticles; p++) {
 			Vector<real> acceleration;
 			Vector<real> accelSegment;
@@ -73,7 +69,7 @@ namespace apoapsys {
 	void LeapFrogSimulator::stepPositionVectors(real deltaT) {
 
 		size_t numParticles = particles.size();
-#pragma omp parallel for
+#pragma omp for
 		for (int p = 0; p < numParticles; p++) {
 			Particle * particle = particles[p];
 			particle->position.copyInto(particle->previousPosition);
@@ -111,36 +107,39 @@ namespace apoapsys {
 	}
 
 
-	void LeapFrogSimulator::step(real deltaT, std::vector<Collision *> * collisions) {
-		stepVelocityVectors(deltaT);
-		stepPositionVectors(deltaT);
+	void LeapFrogSimulator::runCollisionDetection(std::vector<Collision *> * collisions) {
+		size_t numParticles = this->particles.size();
+		#pragma omp parallel for
+		for (int p = 0; p < numParticles; p++) {
+			Particle * particle = this->particles[p];
+			Particle * collidesWith = this->checkForCollision(particle);
 
-		if (this->_checkForCollisions && collisions != NULL) {
+			if (collidesWith != NULL) {
 
-			size_t numParticles = this->particles.size();
-#pragma omp parallel for
-			for (int p = 0; p < numParticles; p++) {
-				Particle * particle = this->particles[p];
-				Particle * collidesWith = this->checkForCollision(particle);
-
-				if (collidesWith != NULL) {
-
-					// This isn't exactly how it works, but for now...
-					if (particle->mass > collidesWith->mass) {
-						collidesWith->enabled = false;
-						particle->mass += collidesWith->mass;
-						particle->velocity += collidesWith->velocity;
-					} else {
-						particle->enabled = false;
-						collidesWith->mass += particle->mass;
-						collidesWith->velocity += particle->velocity;
-					}
-
-					Collision * collision = new Collision(particle, collidesWith);
-					collisions->push_back(collision);
+				// This isn't exactly how it works, but for now...
+				if (particle->mass > collidesWith->mass) {
+					collidesWith->enabled = false;
+					particle->mass += collidesWith->mass;
+					particle->velocity += collidesWith->velocity;
+				} else {
+					particle->enabled = false;
+					collidesWith->mass += particle->mass;
+					collidesWith->velocity += particle->velocity;
 				}
+
+				Collision * collision = new Collision(particle, collidesWith);
+				collisions->push_back(collision);
 			}
 		}
+
+	}
+
+	void LeapFrogSimulator::step(real deltaT) {
+#pragma omp parallel
+    {
+		stepVelocityVectors(deltaT);
+		stepPositionVectors(deltaT);
+    }
 
 	}
 };

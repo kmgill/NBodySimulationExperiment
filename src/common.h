@@ -11,7 +11,7 @@
 // Preprocessor Configurations
 #define NBODY_USE_FAST_SQRT            1
 #define NBODY_COMPILE_SNAPSHOTS        1
-
+#define USING_GTK_MAIN                 1
 
 #ifdef WIN32
 
@@ -29,7 +29,7 @@
 #endif
 
 #ifndef WIN32
-
+#define INLINE inline
 #include <inttypes.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
