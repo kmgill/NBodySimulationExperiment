@@ -25,11 +25,12 @@
 
 // Basic configuration
 #define NBODY_ITERATION_INTERVAL         1.0
-#define NBODY_NUM_ITERATIONS             (86400 * 365 * 10)
+#define NBODY_NUM_ITERATIONS             (86400 * 7)
+//* 365 * 1)
 #define NBODY_CHECK_COLLISIONS           false
 #define NBODY_ALLOW_MAJOR_BODIES         true
-#define NBODY_ALLOW_MINOR_BODIES         false
-#define NBODY_ALLOW_MOONS                false
+#define NBODY_ALLOW_MINOR_BODIES         true
+#define NBODY_ALLOW_MOONS                true
 #define NBODY_SET_CPU_AFFINITY           false
 
 #ifdef _DEBUG
