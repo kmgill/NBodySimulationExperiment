@@ -11,7 +11,7 @@
 // Preprocessor Configurations
 #define NBODY_USE_FAST_SQRT            1
 #define NBODY_COMPILE_SNAPSHOTS        1
-#define USING_GTK_MAIN                 1
+#define USING_GTK_MAIN                 0
 
 #ifdef WIN32
 

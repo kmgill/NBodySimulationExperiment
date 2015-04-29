@@ -33,6 +33,7 @@ namespace apoapsys {
 		~LeapFrogSimulator();
 
 		void addParticle(Particle * particle);
+		std::vector<Particle *> * getParticles();
 		void addForceProvider(ForceProvider * forceProvider);
 		void addCollisionProvider(CollisionDetectionProvider * collisionProvider);
 

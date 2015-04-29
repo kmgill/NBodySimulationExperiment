@@ -33,6 +33,10 @@ namespace apoapsys {
 		this->particles.push_back(particle);
 	}
 
+	std::vector<Particle *> * LeapFrogSimulator::getParticles() {
+		return &this->particles;
+	}
+
 	void LeapFrogSimulator::addForceProvider(ForceProvider * forceProvider) {
 		this->forceProviders.push_back(forceProvider);
 	}

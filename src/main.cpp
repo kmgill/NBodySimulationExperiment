@@ -56,7 +56,6 @@ int main(int argc, char ** argv) {
 	}
 #endif
 
-	std::cout << "Num OpenMP Threads: " << omp_get_num_threads() << std::endl;
 	std::cout << "Initializing Simulator Engine..." << std::endl;
 
 	LeapFrogSimulator * simulator = createBasicLeapFrogSimulator(NBODY_ALLOW_MAJOR_BODIES, NBODY_ALLOW_MOONS, NBODY_ALLOW_MINOR_BODIES);
@@ -71,6 +70,7 @@ int main(int argc, char ** argv) {
 		simulator->step(NBODY_ITERATION_INTERVAL);
 
 		if (i % (86400) == 0) {
+			std::cout << "tick #" << (i / 86400) << std::endl;
 		//	real distAU = earth->position.distanceTo(sun->position) / 149597870700.0;
 		//	std::cout << "Earth/Sun Distance: " << distAU << " AU, Earth Velocity: " << (earth->velocity.length() / 1000.0) << "km/s" << std::endl;
 		}
